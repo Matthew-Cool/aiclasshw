@@ -22,39 +22,63 @@ class Geometry:
         # to get the number of instance that have already created
         pass
 
+    def distanceBetweenTuples(self, a, b):
+        x1, y1 = self.points[a]
+        x2, y2 = self.points[b]
+        distance = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return np.sqrt(distance)
+
 class Triangle(Geometry):
     def __init__(self, a, b, c):
         # a, b, c are tuples that represent for 3 vertices of a triangle
         # TODO: Your task is to implement the constructor
         #super(Triangle, self).__init__(?, ?)
-        pass
+        super(Triangle, self).__init__("Triangle", [a, b, c])
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        pass
+        side1 = self.distanceBetweenTuples(self.a, self.b)
+        side2 = self.distanceBetweenTuples(self.b, self.c)
+        side3 = self.distanceBetweenTuples(self.c, self.a)
+
+        semiPerimeter = (side1+side2+side3)/2
+
+        return np.sqrt(semiPerimeter * (semiPerimeter - side1)(semiPerimeter - side2)(semiPerimeter - side3))
+        
 
 class Rectangle(Geometry):
     def __init__(self, a, b):
         # a, b are tuples that represent for top and bottom vertices of a rectangle
         # TODO: Your task is to implement the constructor
         # super(Rectangle, self).__init__(?, ?)
-        pass
+        x1, y1 = a
+        x2, y2 = b
+        d = (x2, y1)
+        c = (x1, y2)
+        super(Rectangle, self).__init__("Rectangle", [a, d, b, c])
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        pass
+        x = self.distanceBetweenTuples(self.a, self.d)
+        y = self.distanceBetweenTuples(self.a, self.c)
 
-class Square(Rectangle):
+        return x*y
+
+class Square(Rectangle): #MIGHT NEED TO DOUBLE CHECK IMPLEMENTATION
     def __init__(self, a, length):
         # a is a tuple that represent a top vertex of a square
         # length is the side length of a square
         # TODO: Your task is to implement the constructor
         # super(Square, self).__init__(?, ?)
-        pass
+        b = (a, a-length)
+        c = (a+length, a)
+        d = (a+length, a-length)
+        super(Square, self).__init__("Square", [a, b, c, d])
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        pass
+        side = self.distanceBetweenTuples(self.a, self.b)
+        return side * side
 
 class Circle(Geometry):
     def __init__(self, o, r):
@@ -62,11 +86,12 @@ class Circle(Geometry):
         # r is the radius of a circle
         # TODO: Your task is to implement the constructor
         # super(Circle, self).__init__(?, ?)
-        pass
+        super(Circle, self).__init__("Circle", o)
+        self.r = r
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        pass
+        return (self.r ** 2)(np.pi)
 
 class Polygon(Geometry):
     def __init__(self, points):
