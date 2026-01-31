@@ -20,7 +20,7 @@ class Geometry:
     def count_number_of_geometry(cls):
         # TODO: Your task is to implement the class method
         # to get the number of instance that have already created
-        pass
+        return Geometry.count
 
     def distanceBetweenTuples(self, a, b):
         x1, y1 = self.points[a]
@@ -188,17 +188,26 @@ def test_pow():
 def get_A():
     # TODO: Find a matrix A
     # You have to return in the format of numpy array
-    pass
+    return np.array([[1.0,1.0], [1.0, 0.0]])
 
 def fibo(n):
     # TODO: Calcualte the n'th Fibonacci number
     A = get_A()
-    pass
+    fib1 = np.array([[1.0],[1.0]])
+    fibN = recursive_pow(A, n-1) @ fib1
+    return int(fibN[0][0])
 
 def f(n, k):
     # TODO: Calcualte the n'th number of the recursive sequence
-    pass
+    fn = 0
+    if (n < k):
+        return 1
+    else:
+        for i in range(1, k+1):
+            fn += f(n-i, k)
+        return fn
 
+    
 def test_fibonacci():
     ## Test Cases for Fibonacci and Recursive Sequence ##
 
@@ -213,6 +222,7 @@ def test_fibonacci():
     for n in range(5, 11):
         for k in range(2, 5):
             print("f(%d, %d) = %d" % (n, k, f(n, k)))
+
 def DFS(A):
     # A is a mxn matrix
     pass
