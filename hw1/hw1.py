@@ -37,13 +37,13 @@ class Triangle(Geometry):
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        side1 = self.distanceBetweenTuples(self.a, self.b)
-        side2 = self.distanceBetweenTuples(self.b, self.c)
-        side3 = self.distanceBetweenTuples(self.c, self.a)
+        side1 = self.distanceBetweenTuples(0, 1)
+        side2 = self.distanceBetweenTuples(0, 2)
+        side3 = self.distanceBetweenTuples(1, 2)
 
         semiPerimeter = (side1+side2+side3)/2
 
-        return np.sqrt(semiPerimeter * (semiPerimeter - side1)(semiPerimeter - side2)(semiPerimeter - side3))
+        return np.sqrt(semiPerimeter * (semiPerimeter - side1)*(semiPerimeter - side2)*(semiPerimeter - side3))
         
 
 class Rectangle(Geometry):
@@ -59,8 +59,8 @@ class Rectangle(Geometry):
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        x = self.distanceBetweenTuples(self.a, self.d)
-        y = self.distanceBetweenTuples(self.a, self.c)
+        x = self.distanceBetweenTuples(0, 1)
+        y = self.distanceBetweenTuples(0, 3)
 
         return x*y
 
@@ -70,14 +70,12 @@ class Square(Rectangle): #MIGHT NEED TO DOUBLE CHECK IMPLEMENTATION
         # length is the side length of a square
         # TODO: Your task is to implement the constructor
         # super(Square, self).__init__(?, ?)
-        b = (a, a-length)
-        c = (a+length, a)
-        d = (a+length, a-length)
-        super(Square, self).__init__("Square", [a, b, c, d])
+        b = (a[0] + length, a[1] - length)
+        super(Square, self).__init__(a, b)
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        side = self.distanceBetweenTuples(self.a, self.b)
+        side = self.distanceBetweenTuples(0, 1)
         return side * side
 
 class Circle(Geometry):
@@ -91,7 +89,7 @@ class Circle(Geometry):
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        return (self.r ** 2)(np.pi)
+        return (self.r ** 2)*(np.pi)
 
 class Polygon(Geometry):
     def __init__(self, points):
@@ -107,7 +105,7 @@ class Polygon(Geometry):
         for i in range(2, numOfPoints):
             side1, side2, side3 = self.distanceBetweenTuples(0, i-1), self.distanceBetweenTuples(0, i), self.distanceBetweenTuples(i, i-1)
             semiPerimeter = (side1 + side2 + side3)/2
-            area += np.sqrt(semiPerimeter * (semiPerimeter - side1)(semiPerimeter - side2)(semiPerimeter - side3))
+            area += np.sqrt(semiPerimeter * (semiPerimeter - side1)*(semiPerimeter - side2)*(semiPerimeter - side3))
         return area
 
 
@@ -135,11 +133,11 @@ def matrix_multiplication(A, B):
     # a matrix multiplication between A and B
     n, k = A.shape
     j, m = B.shape
-    C = [[0] * n for _ in range(m)]
+    C = [[0] * m for _ in range(n)]
     for i in range(n):
-        for k in range(m):
+        for p in range(m):
             for l in range(k):
-                C[i][j] += A[i,l] * B[l,j]
+                C[i][p] += A[i,l] * B[l,p]
     return np.array(C)
 
 def test_matrix_mul():
@@ -223,13 +221,87 @@ def test_fibonacci():
         for k in range(2, 5):
             print("f(%d, %d) = %d" % (n, k, f(n, k)))
 
+def recursiveDFS(A, x, y, visited, path):
+    m, n = A.shape
+    visited[x][y] = 1
+
+    #are we at the end??? If so, lets print this and be done
+    if(x == m-1 and y == n-1):
+        print("(0,0)", end="")
+        for (u,v) in path:
+            print(" -> (%d, %d)" % (u,v), end="")
+        print()
+        return True
+    
+    #lets check next door 
+    for xx, yy in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
+        u = x + xx
+        v = y + yy
+        if (0 <= u) and (u < m) and (0 <= v) and (v < n) and (A[u][v] != 0) and visited[u][v] == 0:
+            path.append((u,v))
+
+            if(recursiveDFS(A,u,v,visited,path) == True):
+                return True
+            
+            path.pop()
+
+    return False
+
+
 def DFS(A):
     # A is a mxn matrix
-    pass
+    result = recursiveDFS(A, 0, 0, np.array([[0] * A.shape[1] for _ in range(A.shape[0])]), [])
+    if not result: #if no path is found at all... I think it works lol
+        print("-1")
 
 def BFS(A):
     # A is a mxn matrix
-    pass
+    m, n = A.shape
+    
+    # Check if start or end is blocked
+    if A[0][0] == 0 or A[m-1][n-1] == 0:
+        print("-1")
+        return
+    
+    visited = np.zeros((m, n), dtype=int)
+    px, py = np.full((m, n), -1, dtype=int), np.full((m, n), -1, dtype=int)
+    queue = []
+    queue.append((0, 0))
+    visited[0][0] = 1
+
+    while queue:
+        x, y = queue.pop(0)
+        
+        #check if reached destination
+        if x == m - 1 and y == n - 1:
+            break
+        
+        for dx, dy in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
+            u = x + dx
+            v = y + dy
+            if 0 <= u < m and 0 <= v < n and A[u][v] != 0 and visited[u][v] == 0:
+                queue.append((u, v))
+                visited[u][v] = 1
+                px[u][v] = x
+                py[u][v] = y
+
+    #
+    if visited[m-1][n-1] == 0:
+        print("-1")
+    else:
+        path = []
+        x, y = m - 1, n - 1
+        while not (x == 0 and y == 0):
+            u, v = px[x][y], py[x][y]
+            path.append((u, v))
+            x, y = u, v
+        
+        for u, v in path[::-1]:
+            print("(%d, %d) -> " % (u, v), end="")
+        print("(%d, %d)" % (m - 1, n - 1))
+
+
+
 
 
 def findMinimum(A):
@@ -238,13 +310,21 @@ def findMinimum(A):
 
 def test_bfs_dfs_find_minimum():
     ## Test Cases for BFS, DFS, Find Minimum ##
-    A = np.array([[1, 1, 1, 0, 1], [0, 0, 1, 0, 0], [1, 1, 1, 1, 1], [1, 1, 0, 1, 1], [1, 1, 0, 1, 1]])
+    A = np.array([[1, 1, 1, 0, 1],
+                  [0, 0, 1, 0, 0], 
+                  [1, 1, 1, 1, 1], 
+                  [1, 1, 0, 1, 0], 
+                  [1, 1, 0, 1, 1]])
 
     BFS(A)
 
     DFS(A)
 
-    A = np.array([[1, 1, 1, 0, 1], [0, 0, 1, 0, 0], [1, 1, 1, 1, 2], [1, 1, 0, 2, 1], [1, 1, 0, 2, 1]])
+    A = np.array([[1, 1, 1, 0, 1], 
+                  [0, 0, 1, 0, 0], 
+                  [1, 1, 1, 1, 2], 
+                  [1, 1, 0, 2, 1], 
+                  [1, 1, 0, 2, 1]])
 
     findMinimum(A)
 
