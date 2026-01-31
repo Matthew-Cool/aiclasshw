@@ -98,11 +98,18 @@ class Polygon(Geometry):
         # points is a list of tuples that represent vertices of a polygon
         # TODO: Your task is to implement the constructor
         # super(Polygon, self).__init__(?, ?)
-        pass
+        super(Polygon, self).__init__("Polygon", points)
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        pass
+        numOfPoints = len(self.points)
+        area = 0
+        for i in range(2, numOfPoints):
+            side1, side2, side3 = self.distanceBetweenTuples(0, i-1), self.distanceBetweenTuples(0, i), self.distanceBetweenTuples(i, i-1)
+            semiPerimeter = (side1 + side2 + side3)/2
+            area += np.sqrt(semiPerimeter * (semiPerimeter - side1)(semiPerimeter - side2)(semiPerimeter - side3))
+        return area
+
 
 def test_geomery():
     ## Test cases for Problem 1
@@ -126,7 +133,14 @@ def test_geomery():
 def matrix_multiplication(A, B):
     # TODO: Your task is to required to implement
     # a matrix multiplication between A and B
-    pass
+    n, k = A.shape
+    j, m = B.shape
+    C = [[0] * n for _ in range(m)]
+    for i in range(n):
+        for k in range(m):
+            for l in range(k):
+                C[i][j] += A[i,l] * B[l,j]
+    return np.array(C)
 
 def test_matrix_mul():
     ## Test cases for matrix multplication ##
@@ -138,16 +152,25 @@ def test_matrix_mul():
         assert np.mean(np.abs(A.dot(B) - matrix_multiplication(A, B))) <= 1e-7, "Your implmentation is wrong!"
         print("[Test Case %d]. Your implementation is correct!" % test)
 
-def recursive_pow(A, n):
+def recursive_pow(A, n): # FIXME: Should work, but not how the slides do it so idk if thats an issue lol
     # TODO: Your task is required implementing
     # a recursive function
-
-    pass
+    if n == 0:
+        return np.identity(A.shape[0])
+    elif n == 1:
+        return A
+    else:
+        return matrix_multiplication(A, recursive_pow(A, n-1))
 
 def iterative_pow(A, n):
 	# TODO: Your task is required implementing
     # a iterative function
-    pass
+    if n == 0:
+        return np.identity(A.shape[0])
+    B = A
+    for i in range(n-1):
+        B = matrix_multiplication(A, B)
+    return B
 
 def test_pow():
     ## Test cases for the pow function ##
@@ -160,7 +183,7 @@ def test_pow():
     for test in range(10):
         n = random.randint(2, 5)
         A = np.random.randn(n, n)
-        print("Iterative: A^{} = {}".format(n, recursive_pow(A, n)))
+        print("Iterative: A^{} = {}".format(n, iterative_pow(A, n))) #fixed, this should be iterative, not recursive
 
 def get_A():
     # TODO: Find a matrix A
