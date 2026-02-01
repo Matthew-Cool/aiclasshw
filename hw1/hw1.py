@@ -227,7 +227,7 @@ def recursiveDFS(A, x, y, visited, path):
 
     #are we at the end??? If so, lets print this and be done
     if(x == m-1 and y == n-1):
-        print("(0,0)", end="")
+        print("(0, 0)", end="")
         for (u,v) in path:
             print(" -> (%d, %d)" % (u,v), end="")
         print()
@@ -285,7 +285,7 @@ def BFS(A):
                 px[u][v] = x
                 py[u][v] = y
 
-    #
+    #printing stuff :)
     if visited[m-1][n-1] == 0:
         print("-1")
     else:
@@ -305,8 +305,58 @@ def BFS(A):
 
 
 def findMinimum(A):
-    # A is a mxn matrix
-    pass
+    import heapq
+    
+    m, n = A.shape
+    
+    #we blocked?
+    if A[0][0] == 0 or A[m-1][n-1] == 0:
+        print("-1")
+        return
+    
+    dist = np.full((m, n), float('inf'))
+    dist[0][0] = A[0][0]
+    
+    px, py = np.full((m, n), -1, dtype=int), np.full((m, n), -1, dtype=int)
+    
+    pq = [(A[0][0], 0, 0)]
+    
+    while pq:
+        d, x, y = heapq.heappop(pq)
+        
+        if d > dist[x][y]:
+            continue
+        
+        if x == m - 1 and y == n - 1:
+            break
+        
+        #check next door
+        for dx, dy in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
+            u = x + dx
+            v = y + dy
+            if 0 <= u < m and 0 <= v < n and A[u][v] != 0:
+                new_dist = dist[x][y] + A[u][v]
+                if new_dist < dist[u][v]:
+                    dist[u][v] = new_dist
+                    px[u][v] = x
+                    py[u][v] = y
+                    heapq.heappush(pq, (new_dist, u, v))
+    
+    if dist[m-1][n-1] == float('inf'):
+        print("-1")
+    else:
+        #print this stuff and find smallest
+        path = []
+        x, y = m - 1, n - 1
+        while not (x == 0 and y == 0):
+            u, v = px[x][y], py[x][y]
+            path.append((u, v))
+            x, y = u, v
+        
+        print("Cost: %d" % int(dist[m-1][n-1]))
+        for u, v in path[::-1]:
+            print("(%d, %d) -> " % (u, v), end="")
+        print("(%d, %d)" % (m - 1, n - 1))
 
 def test_bfs_dfs_find_minimum():
     ## Test Cases for BFS, DFS, Find Minimum ##
@@ -323,8 +373,8 @@ def test_bfs_dfs_find_minimum():
     A = np.array([[1, 1, 1, 0, 1], 
                   [0, 0, 1, 0, 0], 
                   [1, 1, 1, 1, 2], 
-                  [1, 1, 0, 2, 1], 
-                  [1, 1, 0, 2, 1]])
+                  [1, 1, 0, 2, 2], 
+                  [1, 1, 0, 1, 1]])
 
     findMinimum(A)
 
