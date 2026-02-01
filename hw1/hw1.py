@@ -23,8 +23,8 @@ class Geometry:
         return Geometry.count
 
     def distanceBetweenTuples(self, a, b):
-        x1, y1 = self.points[a]
-        x2, y2 = self.points[b]
+        x1, y1 = a
+        x2, y2 = b
         distance = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return np.sqrt(distance)
 
@@ -37,9 +37,9 @@ class Triangle(Geometry):
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        side1 = self.distanceBetweenTuples(0, 1)
-        side2 = self.distanceBetweenTuples(0, 2)
-        side3 = self.distanceBetweenTuples(1, 2)
+        side1 = self.distanceBetweenTuples(self.points[0], self.points[1])
+        side2 = self.distanceBetweenTuples(self.points[0], self.points[2])
+        side3 = self.distanceBetweenTuples(self.points[1], self.points[2])
 
         semiPerimeter = (side1+side2+side3)/2
 
@@ -59,8 +59,8 @@ class Rectangle(Geometry):
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        x = self.distanceBetweenTuples(0, 1)
-        y = self.distanceBetweenTuples(0, 3)
+        x = self.distanceBetweenTuples(self.points[0], self.points[1])
+        y = self.distanceBetweenTuples(self.points[0], self.points[3])
 
         return x*y
 
@@ -75,7 +75,7 @@ class Square(Rectangle): #MIGHT NEED TO DOUBLE CHECK IMPLEMENTATION
 
     def calculate_area(self):
         #TODO: Your task is required to implement a area function
-        side = self.distanceBetweenTuples(0, 1)
+        side = self.distanceBetweenTuples(self.points[0], self.points[1])
         return side * side
 
 class Circle(Geometry):
@@ -103,7 +103,7 @@ class Polygon(Geometry):
         numOfPoints = len(self.points)
         area = 0
         for i in range(2, numOfPoints):
-            side1, side2, side3 = self.distanceBetweenTuples(0, i-1), self.distanceBetweenTuples(0, i), self.distanceBetweenTuples(i, i-1)
+            side1, side2, side3 = self.distanceBetweenTuples(self.points[0], self.points[i-1]), self.distanceBetweenTuples(self.points[0], self.points[i]), self.distanceBetweenTuples(self.points[i], self.points[i-1])
             semiPerimeter = (side1 + side2 + side3)/2
             area += np.sqrt(semiPerimeter * (semiPerimeter - side1)*(semiPerimeter - side2)*(semiPerimeter - side3))
         return area
