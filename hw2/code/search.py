@@ -88,19 +88,19 @@ def tiny_maze_search(problem):
     return [s, s, w, s, w, w, s, w]
 
 
-def depth_first_search(problem):
+def depth_first_search(problem): #TODO 
     """Search the deepest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     util.raise_not_defined()
 
 
-def breadth_first_search(problem):
+def breadth_first_search(problem): #TODO
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     util.raise_not_defined()
 
 
-def uniform_cost_search(problem, heuristic=None):
+def uniform_cost_search(problem, heuristic=None): #TODO
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     util.raise_not_defined()
@@ -112,15 +112,15 @@ def a_really_really_bad_heuristic(position, problem):
     from random import random, sample, choices
     return int(random()*1000)
 
-def null_heuristic(state, problem=None):
+def null_heuristic(state, problem=None): #TODO
     return 0
 
-def your_heuristic(state, problem=None):
+def your_heuristic(state, problem=None): #TODO
     """ Your Custom Heuristic """
     "*** YOUR CODE HERE ***"
     return 0
 
-def a_star_search(problem, heuristic=null_heuristic):
+def a_star_search(problem, heuristic=null_heuristic): #TODO
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     util.raise_not_defined()
