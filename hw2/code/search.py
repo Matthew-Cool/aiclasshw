@@ -111,7 +111,7 @@ def depth_first_search(problem): #TODO
         
         for successor, action, stepCost in problem.get_successors(currentState):
             hits = 0
-            if problem.is_wall(currentState):
+            if problem.is_wall(successor):
                 nextState = (successor, hitWalls+1)
                 hits = hitWalls+1
             else:
@@ -158,7 +158,7 @@ def breadth_first_search(problem): #TODO
             
             if nextState not in visited:
                 visited.add(nextState)
-                queue.push((nextState, hits, currentActions + [action]))
+                queue.push((successor, hits, currentActions + [action]))
     
     #util.raise_not_defined()
 
