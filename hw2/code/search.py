@@ -90,8 +90,41 @@ def tiny_maze_search(problem):
 
 def depth_first_search(problem): #TODO 
     """Search the deepest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    startState = problem.get_start_state()
+
+    #use stack for dfs
+    from util import Stack
+    stack = Stack()
+    stack.push((startState, 0, []))
+
+    visited = set() 
+    visited.add((startState, 0)) #makes startState visited
+
+    while not stack.is_empty():
+        currentState, hitWalls, currentActions = stack.pop()
+
+        if hitWalls > 2:
+            continue
+
+        if problem.is_goal_state(currentState):
+            return currentActions
+        
+        for successor, action, stepCost in problem.get_successors(currentState):
+            hits = 0
+            if problem.is_wall(currentState):
+                nextState = (successor, hitWalls+1)
+                hits = hitWalls+1
+            else:
+                nextState = (successor, hitWalls)
+                hits = hitWalls
+
+            if nextState not in visited:
+                visited.add(nextState)
+                stack.push((successor, hits, currentActions + [action]))
+
+    return []
+    
+    #util.raise_not_defined()
 
 
 def breadth_first_search(problem): #TODO
