@@ -165,8 +165,47 @@ def breadth_first_search(problem): #TODO
 
 def uniform_cost_search(problem, heuristic=None): #TODO
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+
+    startState = problem.get_start_state()
+    from util import PriorityQueue
+    from util import manhattan_distance
+    pQueue = PriorityQueue()
+    pQueue.push((startState, 0, []), 0)
+
+    visited = set()
+    visited.add((startState, 0))
+
+    distance = {}
+    distance[(startState,0)] = 0
+
+    while not pQueue.is_empty():
+        currentState, hitWalls, currentActions = pQueue.pop()
+
+        if hitWalls > 2:
+            continue
+
+        if problem.is_goal_state(currentState) and hitWalls >= 1:
+            return currentActions
+        
+        for successor, action, stepCost in problem.get_successors(currentState):
+            hits = 0
+            if problem.is_wall(successor):
+                nextState = (successor, hitWalls+1)
+                hits = hitWalls+1
+            else:
+                nextState = (successor, hitWalls)
+                hits = hitWalls
+            
+            costToGo = problem.get_cost_of_actions(currentActions + [action]) + hitWalls
+
+            if nextState not in distance:
+                distance[nextState] = float("inf")
+
+            if costToGo < distance[nextState]:
+                pQueue.push((nextState[0], nextState[1], currentActions + [action]), costToGo)
+                distance[nextState] = costToGo
+
+    #util.raise_not_defined()
 
 #
 # heuristics
