@@ -215,17 +215,74 @@ def a_really_really_bad_heuristic(position, problem):
     return int(random()*1000)
 
 def null_heuristic(state, problem=None): #TODO
+
+    """
+    A heuristic function estimates the cost from the current state to the
+    nearest goal in the provided SearchProblem. This heuristic is trivial.
+
+    """
     return 0
 
 def your_heuristic(state, problem=None): #TODO
-    """ Your Custom Heuristic """
-    "*** YOUR CODE HERE ***"
+    "Finds the cost estimate from current node to goal node using Manhattan Distance --> (x-gx) + (y-gy)"
+    from util import manhattan_distance
+    if problem is None:
+        return 0
+    if hasattr(problem, "goal"):
+        return manhattan_distance(state, problem.goal)
+    return 0
+    
+
+
+
     return 0
 
 def a_star_search(problem, heuristic=null_heuristic): #TODO
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    from util import PriorityQueue
+
+    startState = problem.get_start_state()
+    pQueue = PriorityQueue()
+    pQueue.push((startState, 0, []), 0)
+
+    visited = set()
+    visited.add((startState, 0))
+
+    distance = {}
+    distance[(startState,0)] = 0
+
+    while not pQueue.is_empty():
+        currentState, hitWalls, currentActions = pQueue.pop()
+
+        if hitWalls > 2:
+            continue
+
+        if problem.is_goal_state(currentState) and hitWalls >= 1:
+            return currentActions
+        
+        for successor, action, stepCost in problem.get_successors(currentState):
+            hits = 0
+            if problem.is_wall(successor):
+                nextState = (successor, hitWalls+1)
+                hits = hitWalls+1
+            else:
+                nextState = (successor, hitWalls)
+                hits = hitWalls
+            
+            #g = cost of path so far
+            g = problem.get_cost_of_actions(currentActions + [action]) + hitWalls
+
+            #f = g + h as opposed to ucs where f = g
+            costToGo = g + heuristic(successor,problem)
+
+            if nextState not in distance:
+                distance[nextState] = float("inf")
+
+            if costToGo < distance[nextState]:
+                pQueue.push((nextState[0], nextState[1], currentActions + [action]), costToGo)
+                distance[nextState] = costToGo
+    
 
 
 # Abbreviations
