@@ -360,17 +360,29 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state space)
         """
         "*** YOUR CODE HERE ***"
-        util.raise_not_defined()
+        # state is both curr position and what corners already visited --> 0 bc starting state
+        return(self.starting_position, ())
+        
 
     def is_goal_state(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raise_not_defined()
+        x,y = state[0]   #state[0] = pos
+        visitedCorners = state[1]   #state[1] = list of visited corners
+        if len(visitedCorners) == 4:
+            return True
+        else:
+            return False
+
 
     def is_wall(self, state):
-        utils.raise_not_defined()
+        x,y = state[0]
+        if self.walls[x][y]:
+            return True
+        else:
+            return False
 
 
     def get_successors(self, state):
@@ -379,9 +391,29 @@ class CornersProblem(search.SearchProblem):
         N = self.walls.height
 
         "*** YOUR CODE HERE ***"
-        utils.raise_not_defined()
+        #move 1 in each direction and if in bounds and is a corner then add to list of successor corners and add successor as a successor to become
+        x,y = state[0]
+        visitedCorners = state[1]
 
+        for direction in [
+            Directions.NORTH,
+            Directions.SOUTH,
+            Directions.EAST,
+            Directions.WEST,
+        ]:
+            dx,dy = Actions.direction_to_vector(direction)
+            nextx = int(x + dx)
+            nexty = int(y + dy)
 
+            if 0 <= nextx and nextx < M and 0 <= nexty and nexty < N:
+                successorVisitedCorners = list(visitedCorners)
+                next_node = (nextx,nexty)
+
+                if next_node in self.corners and next_node not in successorVisitedCorners:
+                    successorVisitedCorners.append(next_node)
+
+                successor = ((next_node, tuple(successorVisitedCorners)), direction, 1)
+                successors.append(successor)
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
