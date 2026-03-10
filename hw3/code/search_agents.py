@@ -637,7 +637,11 @@ class ClosestDotSearchAgent(SearchAgent):
         walls = game_state.get_walls()
         problem = AnyFoodSearchProblem(game_state)
         "*** YOUR CODE HERE ***"
-        util.raise_not_defined()
+        
+        from search import uniform_cost_search
+        actions,hits = uniform_cost_search(problem, initial_hit=self.num_hits, return_hit=True)
+        self.num_hits += hits
+        return actions
 
 
 class AnyFoodSearchProblem(PositionSearchProblem):

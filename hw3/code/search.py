@@ -178,7 +178,7 @@ def uniform_cost_search(problem, heuristic=None, initial_hit = 0, return_hit = F
 
         if problem.is_goal_state(currentState) and (1 <= hitWalls <= 2):
             if return_hit:
-                return currentActions, wall_hits - initial_hit
+                return currentActions, hitWalls - initial_hit
             else:
                 return currentActions
 
