@@ -588,8 +588,18 @@ def food_heuristic(state, problem):
     problem.heuristic_info['wall_count']
     """
     "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
-    return 0
+    position, foodGrid = state
+    foodPositions = foodGrid.as_list()
+
+    if len(foodPositions) == 0:
+        return 0
+
+    heuristic = []
+    for foodPosition in foodPositions:
+        manhattanDistance = abs(position[0] - foodPosition[0] + abs(position[1] - foodPosition[1]))
+        heuristic.append(manhattanDistance)
+    
+    return max(heuristic)
 
 
 class ClosestDotSearchAgent(SearchAgent):
