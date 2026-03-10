@@ -454,7 +454,26 @@ def corners_heuristic(state, problem):
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    x,y = state[0]
+    visitedCorners = state[1]
+    unvisitedCorners = []
+
+    for corner in problem.corners:
+        if corner not in visitedCorners:
+            unvisitedCorners.append(corner)
+
+    if len(unvisitedCorners) == 0: #nowhere to go bc at goal state
+        return 0
+
+    heuristicValues = []
+
+    for corner in unvisitedCorners:
+        manhattanDistance = abs(x - corner[0] + abs(y - corner[1]))
+        heuristicValues.append(manhattanDistance)
+
+    return max(heuristicValues)
+    
+
 
 
 class AStarCornersAgent(SearchAgent):
